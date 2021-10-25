@@ -10,32 +10,13 @@ import (
 )
 
 func main() {
+	var user, password, region, bucketName string
+
 	rootCmd := &cobra.Command{
 		Use: "concat",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			user, err := cmd.Flags().GetString("user")
-			if err != nil {
-				return fmt.Errorf("failed to return the string value of user flag: %v", err)
-			}
-
-			password, err := cmd.Flags().GetString("password")
-			if err != nil {
-				return fmt.Errorf("failed to return the string value of password flag: %v", err)
-			}
-
-			region, err := cmd.Flags().GetString("region")
-			if err != nil {
-				return fmt.Errorf("failed to return the string value of region flag: %v", err)
-			}
-
-			bucketName, err := cmd.Flags().GetString("bucketName")
-			if err != nil {
-				return fmt.Errorf("failed to return the string value of bucketName flag: %v", err)
-			}
-
 			s3Client := s3_files.NewS3Client(user, password, region, bucketName)
-
-			err = s3Client.CreateBucket()
+			err := s3Client.CreateBucket()
 			if err != nil {
 				return fmt.Errorf("failed to create bucket err: %v", err)
 			}
@@ -64,7 +45,6 @@ func main() {
 		},
 	}
 
-	var user, password, region, bucketName string
 	rootCmd.PersistentFlags().StringVar(
 		&user,
 		"user",

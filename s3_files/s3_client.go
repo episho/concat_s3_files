@@ -17,11 +17,13 @@ import (
 // is greater than 10000
 var ErrInvalidNumOfUploadFiles = errors.New("number of upload files should not be greater than 10000")
 
+// S3Client holds the configuration to create a new S3 client
 type S3Client struct {
 	S3Client   *s3.S3
 	BucketName string
 }
 
+// NewS3Client creates a new S3 client
 func NewS3Client(user, password, region, bucketName string) *S3Client {
 	sess := session.Must(
 		session.NewSession(
@@ -131,7 +133,7 @@ func (s3Client *S3Client) ConcatenateFiles(
 		return err
 	}
 
-	// We finally complete the multipart upload.
+	// We complete the multipart upload.
 	_, err = s3Client.S3Client.CompleteMultipartUpload(
 		&s3.CompleteMultipartUploadInput{
 			Bucket:   aws.String(s3Client.BucketName),
@@ -142,6 +144,10 @@ func (s3Client *S3Client) ConcatenateFiles(
 			},
 		},
 	)
+
+	if err != nil {
+		return err
+	}
 
 	// delete chunk files
 	return s3Client.DeleteFiles(filePaths)
